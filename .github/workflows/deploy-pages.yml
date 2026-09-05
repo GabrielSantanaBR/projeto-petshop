@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: pages-custom
   cancel-in-progress: true
 
 jobs:
@@ -44,6 +44,13 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           path: ./dist
+
+      # Enquanto o repositório continuar configurado em Settings > Pages
+      # como "Deploy from a branch", o GitHub dispara também o workflow
+      # automático de Pages. Esperamos ele terminar para que este deploy do
+      # build do Vite seja o último e não seja sobrescrito pelo código-fonte.
+      - name: Wait for branch Pages deployment
+        run: sleep 100
 
       - name: Deploy to GitHub Pages
         id: deployment
