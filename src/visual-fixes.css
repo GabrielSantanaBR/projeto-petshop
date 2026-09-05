@@ -1,0 +1,331 @@
+/* Correções visuais finais para evitar vazamento de ornamentos entre seções
+   e manter o layout estável quando o navegador aplica zoom/reflow. */
+
+:root {
+  --content-max-final: 1440px;
+}
+
+html,
+body,
+#root,
+.site-shell {
+  width: 100%;
+  max-width: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.site-shell {
+  min-width: 0;
+  overflow-x: clip;
+}
+
+/* Cada bloco decorativo passa a pertencer somente à sua própria seção. */
+.hero-section,
+.appointment-section,
+.pet-profile-section,
+.services-section,
+.trust-strip {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-section,
+.appointment-section,
+.pet-profile-section {
+  overflow: clip;
+}
+
+/* HERO
+   A elipse enorme criada no ::before era a forma que atravessava a faixa verde,
+   cobria informações e mudava de posição aparente conforme o zoom. */
+.hero-section::before {
+  content: none !important;
+  display: none !important;
+}
+
+.hero-section {
+  min-height: auto;
+  padding-bottom: 64px;
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+}
+
+.hero-art {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 700px;
+  min-width: 0;
+  justify-self: end;
+  overflow: visible;
+}
+
+/* Mantém apenas a forma amarela vinculada à foto e com tamanho limitado. */
+.hero-sun {
+  inset: auto !important;
+  top: 6%;
+  right: 1%;
+  bottom: 5%;
+  left: 8%;
+  width: auto;
+  aspect-ratio: auto;
+  border-radius: 46% 54% 54% 46% / 38% 43% 57% 62%;
+  transform: rotate(7deg);
+  z-index: 0;
+}
+
+.hero-image-frame {
+  z-index: 1;
+  max-width: 100%;
+}
+
+.hero-image-frame img {
+  max-width: 100%;
+}
+
+.hero-sticker,
+.hero-float-card,
+.paw-orbit {
+  z-index: 2;
+}
+
+/* A faixa de benefícios nunca pode ser coberta por elementos do hero. */
+.trust-strip {
+  z-index: 5;
+  overflow: hidden;
+}
+
+.services-section {
+  z-index: 4;
+}
+
+/* Evita que cards flutuantes escapem demais quando o viewport muda pelo zoom. */
+.hero-sticker-top {
+  left: 1%;
+}
+
+.hero-float-card-bottom {
+  right: 0;
+  bottom: 5%;
+}
+
+.paw-orbit-one {
+  right: 3%;
+  top: 0;
+}
+
+.paw-orbit-two {
+  left: 2%;
+  bottom: 0;
+}
+
+/* AGENDAMENTO
+   A pata decorativa deixa de flutuar no meio da composição e passa a funcionar
+   apenas como marca d'água do bloco de introdução. */
+.appointment-intro {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.appointment-intro > :not(.appointment-paw) {
+  position: relative;
+  z-index: 2;
+}
+
+.appointment-paw {
+  position: absolute !important;
+  right: 28px !important;
+  bottom: 24px !important;
+  left: auto !important;
+  top: auto !important;
+  width: 116px;
+  height: 116px;
+  display: grid;
+  place-items: center;
+  opacity: 0.075;
+  transform: none !important;
+  pointer-events: none;
+  z-index: 0 !important;
+}
+
+.appointment-paw svg {
+  width: 100%;
+  height: 100%;
+}
+
+.booking-panel {
+  position: relative;
+  z-index: 3;
+  min-width: 0;
+}
+
+/* MEU PET
+   Mantém foto e chips na mesma área visual, sem a decoração invadir outras
+   regiões ou ficar parcialmente perdida fora do card. */
+.pet-profile-section::before,
+.profile-visual::before {
+  content: none !important;
+  display: none !important;
+}
+
+.profile-visual {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+}
+
+.profile-photo {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: 30px 30px 8px 30px;
+}
+
+.profile-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-live,
+.profile-tag {
+  z-index: 3;
+}
+
+.profile-live {
+  top: 16px;
+  right: 16px;
+}
+
+.profile-tag.tag-one {
+  top: 20px;
+  left: 20px;
+  right: auto;
+  bottom: auto;
+}
+
+.profile-tag.tag-two {
+  right: 20px;
+  bottom: 20px;
+  left: auto;
+  top: auto;
+}
+
+/* Largura útil previsível em telas muito largas / zoom reduzido.
+   O fundo continua full-bleed, mas o conteúdo não se estica indefinidamente. */
+@media (min-width: 1441px) {
+  :root {
+    --page-gutter: max(32px, calc((100vw - var(--content-max-final)) / 2));
+    --header-gutter: max(32px, calc((100vw - var(--content-max-final)) / 2));
+  }
+
+  .hero-art {
+    max-width: 680px;
+  }
+}
+
+/* Zoom para dentro / notebook: reflow antes que hero, textos e cards se esmaguem. */
+@media (max-width: 1100px) {
+  .hero-section {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 34px;
+    padding-top: 42px;
+  }
+
+  .hero-copy {
+    max-width: 720px;
+    padding-top: 0;
+  }
+
+  .hero-art {
+    justify-self: center;
+    width: min(100%, 650px);
+    min-height: 390px;
+  }
+
+  .hero-sticker-top {
+    left: 2%;
+  }
+
+  .hero-float-card-bottom {
+    right: 2%;
+  }
+}
+
+@media (max-width: 820px) {
+  .hero-section {
+    padding-bottom: 40px;
+  }
+
+  .hero-art {
+    min-height: 350px;
+  }
+
+  .hero-float-card-bottom {
+    right: 8px;
+    bottom: 12px;
+  }
+
+  .appointment-paw {
+    width: 88px;
+    height: 88px;
+    right: 18px !important;
+    bottom: 18px !important;
+  }
+
+  .profile-tag.tag-one {
+    top: 14px;
+    left: 14px;
+  }
+
+  .profile-tag.tag-two {
+    right: 14px;
+    bottom: 14px;
+  }
+
+  .profile-live {
+    top: 14px;
+    right: 14px;
+  }
+}
+
+@media (max-width: 560px) {
+  .hero-art {
+    min-height: 300px;
+  }
+
+  .hero-sun {
+    top: 7%;
+    right: 0;
+    bottom: 4%;
+    left: 5%;
+  }
+
+  .hero-sticker-top {
+    left: 4px;
+    top: 7%;
+  }
+
+  .hero-float-card-bottom {
+    right: 4px;
+    bottom: 8px;
+  }
+
+  .appointment-paw {
+    width: 68px;
+    height: 68px;
+    opacity: 0.06;
+  }
+
+  .profile-tag {
+    max-width: calc(100% - 28px);
+  }
+}
