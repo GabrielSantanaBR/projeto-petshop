@@ -23,4 +23,4 @@ npm run build
 - Painel demonstrativo `Meu Pet`, fidelidade, adoção responsável e formulário de contato.
 - Layout responsivo com menu mobile, CTA flutuante de WhatsApp e feedbacks de sucesso.
 
-Os dados são locais e demonstrativos; não há dependências de APIs pagas ou chaves.
+Os dados são locais e demonstrativos; não há dependências de APIs pagas ou chaves. Telefones, endereços, e-mails, nomes, avaliações, métricas e demais informações comerciais exibidas na interface devem ser tratados como conteúdo ilustrativo e substituídos pelos dados do cliente antes de uma publicação real.
